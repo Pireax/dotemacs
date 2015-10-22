@@ -11,10 +11,42 @@
 
 
 (after 'evil
-  (require-package 'key-chord)
-  (key-chord-mode 1)
-  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
-  (key-chord-define evil-insert-state-map "kj" 'evil-normal-state)
+  (require-package 'hydra)
+  (defhydra hydra (evil-normal-state-map "C-w")
+    "Hydra mode for evil modes window movement"
+    ("+" evil-window-increase-height)
+    ("-" evil-window-decrease-height)
+    ("<" evil-window-decrease-width)
+    ("=" balance-windows)
+    (">" evil-window-increase-width)
+    ("H" evil-window-move-far-left)
+    ("J" evil-window-move-very-bottom)
+    ("K" evil-window-move-very-top)
+    ("L" evil-window-move-far-right)
+    ("R" evil-window-rotate-upwards)
+    ("W" evil-window-prev)
+    ("_" evil-window-set-height)
+    ("b" evil-window-bottom-right)
+    ("c" evil-window-delete)
+    ("h" evil-window-left)
+    ("j" evil-window-down)
+    ("k" evil-window-up)
+    ("l" evil-window-right)
+    ("n" evil-window-new)
+    ("o" delete-other-windows)
+    ("p" evil-window-mru)
+    ("r" evil-window-rotate-downwards)
+    ("s" evil-window-split)
+    ("t" evil-window-top-left)
+    ("v" evil-window-vsplit)
+    ("w" evil-window-next)
+    ("|" evil-window-set-width))
+
+  (define-key evil-motion-state-map (kbd "C-w") hydra/keymap)
+  (global-set-key (kbd "C-w") hydra/keymap)
+
+
+  (define-key evil-emacs-state-map (kbd "<escape>") 'evil-exit-emacs-state)
 
   (after 'evil-leader
     (evil-leader/set-leader ",")
@@ -97,16 +129,6 @@
   (after "etags-select-autoloads"
     (define-key evil-normal-state-map (kbd "g ]") 'etags-select-find-tag-at-point))
 
-  (global-set-key (kbd "C-w") 'evil-window-map)
-  (define-key evil-normal-state-map (kbd "C-h") 'evil-window-left)
-  (define-key evil-normal-state-map (kbd "C-j") 'evil-window-down)
-  (define-key evil-normal-state-map (kbd "C-k") 'evil-window-up)
-  (define-key evil-normal-state-map (kbd "C-l") 'evil-window-right)
-  (define-key evil-normal-state-map (kbd "C-w C-h") 'evil-window-left)
-  (define-key evil-normal-state-map (kbd "C-w C-j") 'evil-window-down)
-  (define-key evil-normal-state-map (kbd "C-w C-k") 'evil-window-up)
-  (define-key evil-normal-state-map (kbd "C-w C-l") 'evil-window-right)
-
   (define-key evil-motion-state-map "j" 'evil-next-visual-line)
   (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
 
@@ -114,6 +136,8 @@
   (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
 
   (define-key evil-visual-state-map (kbd ", e") 'eval-region)
+
+  (define-key evil-ex-map "e" 'counsel-find-file)
 
   ;; emacs lisp
   (evil-define-key 'normal emacs-lisp-mode-map "K" (bind (help-xref-interned (symbol-at-point))))
@@ -263,6 +287,9 @@
   (define-key help-mode-map (kbd "j") 'next-line)
   (define-key help-mode-map (kbd "k") 'previous-line))
 
+(after 'package-menu-mode
+  (define-key package-menu-mode-map (kbd "j") 'next-line)
+  (define-key package-menu-mode-map (kbd "k") 'previous-line))
 
 (global-set-key [prior] 'previous-buffer)
 (global-set-key [next] 'next-buffer)

@@ -9,6 +9,13 @@
 (size-indication-mode t)
 
 
+(set-frame-font "Consolas-10" nil t)
+
+
+(require-package 'monokai-theme)
+(load-theme 'monokai t)
+
+
 (defun my-fold-overlay (ov)
   (when (eq 'code (overlay-get ov 'hs))
     (let ((col (save-excursion
@@ -22,6 +29,11 @@
 (setq hs-set-up-overlay 'my-fold-overlay)
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 
+
+(require-package 'linum-relative)
+(require 'linum-relative)
+(linum-relative-on)
+(add-hook 'prog-mode-hook 'linum-mode)
 
 (require-package 'diminish)
 (diminish 'visual-line-mode)
@@ -47,7 +59,18 @@
 (require-package 'spaceline)
 (require 'spaceline-config)
 (setq spaceline-highlight-face-func #'spaceline-highlight-face-evil-state)
+(setq spaceline-separator-dir-left '(left . left))
+(setq spaceline-separator-dir-right '(right . right))
+(setq powerline-height (truncate (* 1.1 (frame-char-height))))
 (spaceline-spacemacs-theme)
+
+
+(defface empty-line-face '((t (:inherit 'default)))
+  "Empty line face for fringe bitmap")
+(set-face-attribute 'fringe nil :background "#1B1C18")
+(set-face-foreground 'empty-line-face (face-background 'default))
+(setq-default indicate-empty-lines t)
+(set-fringe-bitmap-face 'empty-line 'empty-line-face)
 
 
 (global-prettify-symbols-mode)

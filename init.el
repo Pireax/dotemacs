@@ -42,6 +42,7 @@
             (const :tag "smartparens" smartparens))
     :group 'dotemacs)
 
+  (require 'package)
   (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                            ("org" . "http://orgmode.org/elpa/")
                            ("gnu" . "http://elpa.gnu.org/packages/")))

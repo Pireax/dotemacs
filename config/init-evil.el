@@ -3,34 +3,15 @@
   :group 'dotemacs
   :prefix 'dotemacs-evil)
 
-(defcustom dotemacs-evil/evil-state-modes
-  '(fundamental-mode
-    conf-mode
-    text-mode
-    prog-mode
-    sws-mode
-    yaml-mode
-    dired-mode
-    web-mode
-    log-edit-mode)
-  "List of modes that should start up in Evil state."
-  :type '(repeat (symbol))
-  :group 'dotemacs-evil)
-
-(defcustom dotemacs-evil/emacs-state-hooks
-  '(org-log-buffer-setup-hook org-capture-mode-hook)
-  "List of hooks to automatically start up in Evil Emacs state."
-  :type '(repeat (symbol))
-  :group 'dotemacs-evil)
-
 (defcustom dotemacs-evil/emacs-state-minor-modes
-  '(git-commit-mode magit-blame-mode)
+  '(git-commit-mode
+    magit-blame-mode)
   "List of minor modes that when active should switch to Emacs state."
   :type '(repeat (symbol))
   :group 'dotemacs-evil)
 
 (defcustom dotemacs-evil/emacs-cursor
-  "red"
+  "SteelBlue1"
   "The color of the cursor when in Emacs state."
   :type 'color)
 
@@ -44,6 +25,13 @@
 (setq evil-insert-state-cursor '("red" bar))
 (setq evil-replace-state-cursor '("red" bar))
 (setq evil-operator-state-cursor '("red" hollow))
+(setq evil-emacs-state-tag " EMACS ")
+(setq evil-normal-state-tag " NORMAL ")
+(setq evil-visual-state-tag " VISUAL ")
+(setq evil-insert-state-tag " INSERT ")
+(setq evil-replace-state-tag " REPLACE ")
+(setq evil-operator-state-tag " OPERATOR ")
+(setq evil-motion-state-tag " MOTION ")
 
 (require-package 'evil)
 (require 'evil)
@@ -67,6 +55,8 @@
 (require-package 'evil-exchange)
 (evil-exchange-install)
 
+
+(setq anzu-cons-mode-line-p nil)
 
 (require-package 'evil-anzu)
 (require 'evil-anzu)
@@ -97,38 +87,8 @@
 (require-package 'evil-numbers)
 
 
-(defun my-major-mode-evil-state-adjust ()
-  (if (apply 'derived-mode-p dotemacs-evil/evil-state-modes)
-      (turn-on-evil-mode)
-    (set-cursor-color dotemacs-evil/emacs-cursor)
-    (turn-off-evil-mode)))
-(add-hook 'after-change-major-mode-hook #'my-major-mode-evil-state-adjust)
-
-(cl-loop for mode in dotemacs-evil/emacs-state-minor-modes
-         do (let ((hook (concat (symbol-name mode) "-hook")))
-              (add-hook (intern hook) `(lambda ()
-                                         (if ,mode
-                                             (evil-emacs-state)
-                                           (evil-normal-state))))))
-
-(cl-loop for hook in dotemacs-evil/emacs-state-hooks
-         do (add-hook hook #'evil-emacs-state))
-
-
 (defun my-send-string-to-terminal (string)
   (unless (display-graphic-p) (send-string-to-terminal string)))
-
-(defun my-evil-terminal-cursor-change ()
-  (when (string= (getenv "TERM_PROGRAM") "iTerm.app")
-    (add-hook 'evil-insert-state-entry-hook (lambda () (my-send-string-to-terminal "\e]50;CursorShape=1\x7")))
-    (add-hook 'evil-insert-state-exit-hook  (lambda () (my-send-string-to-terminal "\e]50;CursorShape=0\x7"))))
-  (when (and (getenv "TMUX") (string= (getenv "TERM_PROGRAM") "iTerm.app"))
-    (add-hook 'evil-insert-state-entry-hook (lambda () (my-send-string-to-terminal "\ePtmux;\e\e]50;CursorShape=1\x7\e\\")))
-    (add-hook 'evil-insert-state-exit-hook  (lambda () (my-send-string-to-terminal "\ePtmux;\e\e]50;CursorShape=0\x7\e\\")))))
-
-(add-hook 'after-make-frame-functions (lambda (frame) (my-evil-terminal-cursor-change)))
-(my-evil-terminal-cursor-change)
-
 
 (defadvice evil-ex-search-next (after advice-for-evil-ex-search-next activate)
   (recenter))
@@ -146,5 +106,6 @@
   (ad-enable-advice #'show-paren-function 'around 'evil)
   (ad-activate #'show-paren-function))
 
+(evil-mode t)
 
 (provide 'init-evil)

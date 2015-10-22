@@ -1,19 +1,18 @@
 (when (eq dotemacs-completion-engine 'auto-complete)
+  (setq ac-auto-show-menu t
+        ac-auto-start t
+        ac-comphist-file (concat dotemacs-cache-directory "ac-comphist.dat")
+        ac-quick-help-delay 0.3
+        ac-quick-help-height 30
+        ac-show-menu-immediately-on-auto-complete t)
 
   (require-package 'auto-complete)
   (require 'auto-complete)
-  (require 'auto-complete-config)
-
-  (setq ac-auto-show-menu t)
-  (setq ac-auto-start t)
-  (setq ac-comphist-file (concat dotemacs-cache-directory "ac-comphist.dat"))
-  (setq ac-quick-help-delay 0.3)
-  (setq ac-quick-help-height 30)
-  (setq ac-show-menu-immediately-on-auto-complete t)
 
   (dolist (mode '(vimrc-mode html-mode stylus-mode))
     (add-to-list 'ac-modes mode))
 
+  (require 'auto-complete-config)
   (ac-config-default)
 
   (after 'linum
@@ -26,8 +25,9 @@
       (when (yas-expand)
         (ac-stop))))
 
-  (require-package 'ac-etags)
   (setq ac-etags-requires 1)
+  (require-package 'ac-etags)
+  (require 'ac-etags)
   (after 'etags
     (ac-etags-setup))
 
