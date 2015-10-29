@@ -8,11 +8,11 @@
 (require-package 'which-key)
 (setq which-key-idle-delay 0.2)
 (which-key-mode)
-
+(add-to-list 'which-key-description-replacement-alist '("*hydra/" . ""))
 
 (after 'evil
   (require-package 'hydra)
-  (defhydra hydra (evil-normal-state-map "C-w")
+  (defhydra evil-window-hydra (evil-normal-state-map "C-w")
     "Hydra mode for evil modes window movement"
     ("+" evil-window-increase-height)
     ("-" evil-window-decrease-height)
@@ -42,8 +42,8 @@
     ("w" evil-window-next)
     ("|" evil-window-set-width))
 
-  (define-key evil-motion-state-map (kbd "C-w") hydra/keymap)
-  (global-set-key (kbd "C-w") hydra/keymap)
+  (define-key evil-motion-state-map (kbd "C-w") evil-window-hydra/keymap)
+  (global-set-key (kbd "C-w") evil-window-hydra/keymap)
 
 
   (define-key evil-emacs-state-map (kbd "<escape>") 'evil-exit-emacs-state)
@@ -143,10 +143,6 @@
   (evil-define-key 'normal emacs-lisp-mode-map "K" (bind (help-xref-interned (symbol-at-point))))
   (after "elisp-slime-nav-autoloads"
     (evil-define-key 'normal emacs-lisp-mode-map (kbd "g d") 'elisp-slime-nav-find-elisp-thing-at-point))
-
-  (after 'coffee-mode
-    (evil-define-key 'visual coffee-mode-map (kbd ", p") 'coffee-compile-region)
-    (evil-define-key 'normal coffee-mode-map (kbd ", p") 'coffee-compile-buffer))
 
   (after 'stylus-mode
     (define-key stylus-mode-map [remap eval-last-sexp] 'my-stylus-compile-and-eval-buffer)

@@ -11,7 +11,7 @@
   :group 'dotemacs-evil)
 
 (defcustom dotemacs-evil/emacs-cursor
-  "SteelBlue1"
+  "SkyBlue2"
   "The color of the cursor when in Emacs state."
   :type 'color)
 
@@ -20,11 +20,12 @@
 (setq evil-magic 'very-magic)
 
 (setq evil-emacs-state-cursor `(,dotemacs-evil/emacs-cursor box))
-(setq evil-normal-state-cursor '("green" box))
-(setq evil-visual-state-cursor '("orange" box))
-(setq evil-insert-state-cursor '("red" bar))
-(setq evil-replace-state-cursor '("red" bar))
-(setq evil-operator-state-cursor '("red" hollow))
+(setq evil-normal-state-cursor '("DarkGoldenrod2" box))
+(setq evil-visual-state-cursor '("gray" box))
+(setq evil-insert-state-cursor '("chartreuse3" bar))
+(setq evil-replace-state-cursor '("chocolate" bar))
+(setq evil-operator-state-cursor '("DarkGoldenrod2" hollow))
+(setq evil-motion-state-cursor '("plum3" box))
 (setq evil-emacs-state-tag " EMACS ")
 (setq evil-normal-state-tag " NORMAL ")
 (setq evil-visual-state-tag " VISUAL ")
