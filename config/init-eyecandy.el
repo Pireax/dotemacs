@@ -9,7 +9,7 @@
 (size-indication-mode t)
 
 
-(set-frame-font "Consolas-10" nil t)
+(set-frame-font "Consolas-12" nil t)
 
 
 (require-package 'monokai-theme)
@@ -30,11 +30,6 @@
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 
 
-(require-package 'linum-relative)
-(require 'linum-relative)
-(linum-relative-on)
-(add-hook 'prog-mode-hook 'linum-mode)
-
 (require-package 'diminish)
 (diminish 'visual-line-mode)
 (after 'undo-tree (diminish 'undo-tree-mode))
@@ -52,17 +47,7 @@
 (after 'hideshow (diminish 'hs-minor-mode))
 (after 'ivy (diminish 'ivy-mode))
 (after 'helm-mode (diminish 'helm-mode))
-(after 'evil-commentary (diminish 'evil-commentary-mode))
 (after 'page-break-lines (diminish 'page-break-lines-mode))
-
-
-(require-package 'spaceline)
-(require 'spaceline-config)
-(setq spaceline-highlight-face-func #'spaceline-highlight-face-evil-state)
-(setq spaceline-separator-dir-left '(left . left))
-(setq spaceline-separator-dir-right '(right . right))
-(setq powerline-height (truncate (* 1.1 (frame-char-height))))
-(spaceline-spacemacs-theme)
 
 
 (defface empty-line-face '((t (:inherit 'default)))

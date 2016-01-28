@@ -10,209 +10,8 @@
 (which-key-mode)
 (add-to-list 'which-key-description-replacement-alist '("*hydra/" . ""))
 
-(after 'evil
-  (require-package 'hydra)
-  (defhydra evil-window-hydra (evil-normal-state-map "C-w")
-    "Hydra mode for evil modes window movement"
-    ("+" evil-window-increase-height)
-    ("-" evil-window-decrease-height)
-    ("<" evil-window-decrease-width)
-    ("=" balance-windows)
-    (">" evil-window-increase-width)
-    ("H" evil-window-move-far-left)
-    ("J" evil-window-move-very-bottom)
-    ("K" evil-window-move-very-top)
-    ("L" evil-window-move-far-right)
-    ("R" evil-window-rotate-upwards)
-    ("W" evil-window-prev)
-    ("_" evil-window-set-height)
-    ("b" evil-window-bottom-right)
-    ("c" evil-window-delete)
-    ("h" evil-window-left)
-    ("j" evil-window-down)
-    ("k" evil-window-up)
-    ("l" evil-window-right)
-    ("n" evil-window-new)
-    ("o" delete-other-windows)
-    ("p" evil-window-mru)
-    ("r" evil-window-rotate-downwards)
-    ("s" evil-window-split)
-    ("t" evil-window-top-left)
-    ("v" evil-window-vsplit)
-    ("w" evil-window-next)
-    ("|" evil-window-set-width))
-
-  (define-key evil-motion-state-map (kbd "C-w") evil-window-hydra/keymap)
-  (global-set-key (kbd "C-w") evil-window-hydra/keymap)
-
-
-  (define-key evil-emacs-state-map (kbd "<escape>") 'evil-exit-emacs-state)
-
-  (after 'evil-leader
-    (evil-leader/set-leader ",")
-    (evil-leader/set-key
-      "w" 'save-buffer
-      "e" 'eval-last-sexp
-      ", e" 'eval-defun
-      "E" 'eval-defun
-      "f" 'ctl-x-5-prefix
-      "c" 'my-new-eshell-split
-      "C" 'customize-group
-      "b d" 'kill-this-buffer
-      "v" (kbd "C-w v C-w l")
-      "s" (kbd "C-w s C-w j")
-      "P" 'package-list-packages
-      "V" (bind (term "vim"))
-      "h" help-map
-      "h h" 'help-for-help-internal)
-
-    (after "paradox-autoloads"
-      (evil-leader/set-key "P" 'paradox-list-packages))
-
-    (after "magit-autoloads"
-      (evil-leader/set-key
-        "g s" 'magit-status
-        "g b" 'magit-blame-popup
-        "g l" 'magit-log-popup
-        "g d" 'magit-diff-popup
-        "g z" 'magit-stash-popup
-        "g c" 'magit-commit-popup)))
-
-  (after "evil-numbers-autoloads"
-    (define-key evil-normal-state-map (kbd "C-a") 'evil-numbers/inc-at-pt)
-    (define-key evil-normal-state-map (kbd "C-S-a") 'evil-numbers/dec-at-pt))
-
-  (after "git-gutter+-autoloads"
-    (define-key evil-normal-state-map (kbd "[ h") #'git-gutter+-next-hunk)
-    (define-key evil-normal-state-map (kbd "] h") #'git-gutter+-previous-hunk)
-
-    (define-key evil-normal-state-map (kbd ", g a") 'git-gutter+-stage-hunks)
-    (define-key evil-normal-state-map (kbd ", g r") 'git-gutter+-revert-hunks)
-
-    (define-key evil-visual-state-map (kbd ", g a") 'git-gutter+-stage-hunks)
-    (define-key evil-visual-state-map (kbd ", g r") 'git-gutter+-revert-hunks)
-    (evil-ex-define-cmd "Gw" (bind
-                              (git-gutter+-stage-whole-buffer))))
-
-  (define-key evil-visual-state-map (kbd "SPC SPC") 'execute-extended-command)
-  (define-key evil-normal-state-map (kbd "SPC SPC") 'execute-extended-command)
-  (define-key evil-normal-state-map (kbd "SPC o") 'imenu)
-  (define-key evil-normal-state-map (kbd "SPC b") 'switch-to-buffer)
-  (define-key evil-normal-state-map (kbd "SPC k") 'kill-buffer)
-  (define-key evil-normal-state-map (kbd "SPC f") 'find-file)
-
-  (when (fboundp 'fzf)
-    (define-key evil-normal-state-map (kbd "SPC f") 'fzf))
-
-  (after "helm-autoloads"
-    (define-key evil-normal-state-map (kbd "g b") 'helm-mini)
-    (define-key evil-normal-state-map (kbd "SPC a") 'helm-apropos)
-    (define-key evil-normal-state-map (kbd "SPC o") 'helm-semantic-or-imenu)
-    (define-key evil-normal-state-map (kbd "SPC t") 'helm-etags-select)
-    (define-key evil-normal-state-map (kbd "SPC m") 'helm-bookmarks)
-    (define-key evil-normal-state-map (kbd "SPC r") 'helm-register))
-
-  (define-key evil-normal-state-map (kbd "C-b") 'evil-scroll-up)
-  (define-key evil-normal-state-map (kbd "C-f") 'evil-scroll-down)
-
-  (define-key evil-normal-state-map (kbd "[ SPC") (bind (evil-insert-newline-above) (forward-line)))
-  (define-key evil-normal-state-map (kbd "] SPC") (bind (evil-insert-newline-below) (forward-line -1)))
-  (define-key evil-normal-state-map (kbd "[ e") (kbd "ddkP"))
-  (define-key evil-normal-state-map (kbd "] e") (kbd "ddp"))
-  (define-key evil-normal-state-map (kbd "[ b") 'previous-buffer)
-  (define-key evil-normal-state-map (kbd "] b") 'next-buffer)
-  (define-key evil-normal-state-map (kbd "[ q") 'previous-error)
-  (define-key evil-normal-state-map (kbd "] q") 'next-error)
-
-  (define-key evil-normal-state-map (kbd "g p") (kbd "` [ v ` ]"))
-
-  (after "etags-select-autoloads"
-    (define-key evil-normal-state-map (kbd "g ]") 'etags-select-find-tag-at-point))
-
-  (define-key evil-motion-state-map "j" 'evil-next-visual-line)
-  (define-key evil-motion-state-map "k" 'evil-previous-visual-line)
-
-  (define-key evil-normal-state-map (kbd "Q") 'my-window-killer)
-  (define-key evil-normal-state-map (kbd "Y") (kbd "y$"))
-
-  (define-key evil-visual-state-map (kbd ", e") 'eval-region)
-
-  (define-key evil-ex-map "e" 'counsel-find-file)
-
-  ;; emacs lisp
-  (evil-define-key 'normal emacs-lisp-mode-map "K" (bind (help-xref-interned (symbol-at-point))))
-  (after "elisp-slime-nav-autoloads"
-    (evil-define-key 'normal emacs-lisp-mode-map (kbd "g d") 'elisp-slime-nav-find-elisp-thing-at-point))
-
-  (after 'stylus-mode
-    (define-key stylus-mode-map [remap eval-last-sexp] 'my-stylus-compile-and-eval-buffer)
-    (evil-define-key 'visual stylus-mode-map (kbd ", p") 'my-stylus-compile-and-show-region)
-    (evil-define-key 'normal stylus-mode-map (kbd ", p") 'my-stylus-compile-and-show-buffer))
-
-  (after "projectile-autoloads"
-    (define-key evil-normal-state-map (kbd "C-p") 'projectile-find-file)
-    (let ((binding (kbd "SPC /")))
-      (cond ((executable-find "pt")
-             (define-key evil-normal-state-map binding 'projectile-pt))
-            ((executable-find "ag")
-             (define-key evil-normal-state-map binding
-               (bind
-                (setq current-prefix-arg t)
-                (call-interactively #'projectile-ag))))
-            ((executable-find "ack")
-             (define-key evil-normal-state-map binding 'projectile-ack))
-            (t
-             (define-key evil-normal-state-map binding 'projectile-grep)))))
-
-  (after "multiple-cursors-autoloads"
-    (after 'js2-mode
-      (evil-define-key 'normal js2-mode-map (kbd "g r") 'js2r-rename-var))
-    (define-key evil-normal-state-map (kbd "g r") 'mc/mark-all-like-this-dwim))
-
-  (after "avy-autoloads"
-    (define-key evil-operator-state-map (kbd "z") 'avy-goto-char-2)
-    (define-key evil-normal-state-map (kbd "s") 'avy-goto-char-2)
-    (define-key evil-motion-state-map (kbd "S-SPC") 'avy-goto-line))
-
-  (after 'eshell
-    (add-hook 'eshell-mode-hook
-              (lambda ()
-                (local-set-key (kbd "C-h") 'evil-window-left)
-                (local-set-key (kbd "C-j") 'evil-window-down)
-                (local-set-key (kbd "C-k") 'evil-window-up)
-                (local-set-key (kbd "C-l") 'evil-window-right))))
-
-  (cond ((eq dotemacs-switch-engine 'ivy)
-         (define-key evil-normal-state-map (kbd "SPC e") 'ivy-recentf)
-         (define-key evil-normal-state-map (kbd "SPC l") 'swiper)
-         (define-key evil-normal-state-map (kbd "SPC y") 'my-ivy-kill-ring)
-         (define-key evil-normal-state-map (kbd "SPC b") 'my-ivy-mini))
-        ((eq dotemacs-switch-engine 'helm)
-         (define-key evil-normal-state-map (kbd "SPC e") 'helm-recentf)
-         (define-key evil-normal-state-map (kbd "SPC l") 'helm-swoop)
-         (define-key evil-normal-state-map (kbd "SPC L") 'helm-multi-swoop)
-         (define-key evil-normal-state-map (kbd "SPC b") 'helm-mini)
-         (define-key evil-normal-state-map (kbd "SPC y") 'helm-show-kill-ring)
-         (define-key evil-normal-state-map (kbd "C-p") 'helm-projectile)))
-
-  ;; butter fingers
-  (evil-ex-define-cmd "Q" 'evil-quit)
-  (evil-ex-define-cmd "Qa" 'evil-quit-all)
-  (evil-ex-define-cmd "QA" 'evil-quit-all))
-
-;; escape minibuffer
-(define-key minibuffer-local-map [escape] 'my-minibuffer-keyboard-quit)
-(define-key minibuffer-local-ns-map [escape] 'my-minibuffer-keyboard-quit)
-(define-key minibuffer-local-completion-map [escape] 'my-minibuffer-keyboard-quit)
-(define-key minibuffer-local-must-match-map [escape] 'my-minibuffer-keyboard-quit)
-(define-key minibuffer-local-isearch-map [escape] 'my-minibuffer-keyboard-quit)
-
-(define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
-
-
 (after 'ivy
   (define-key ivy-mode-map [escape] (kbd "C-g")))
-
 
 (after "magit-autoloads"
   (global-set-key (kbd "C-x g") 'magit-dispatch-popup))
@@ -221,17 +20,13 @@
 (after "project-explorer-autoloads"
   (global-set-key [f2] 'project-explorer-open)
   (autoload 'pe/show-file "project-explorer")
-  (global-set-key [f3] 'pe/show-file)
-  (after 'project-explorer
-    (define-key project-explorer-mode-map (kbd "C-l") 'evil-window-right)))
-
+  (global-set-key [f3] 'pe/show-file))
 
 (after "multiple-cursors-autoloads"
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-unset-key (kbd "M-<down-mouse-1>"))
   (global-set-key (kbd "M-<mouse-1>") 'mc/add-cursor-on-click))
-
 
 (after 'comint
   (define-key comint-mode-map [up] 'comint-previous-input)
@@ -273,19 +68,9 @@
             (lambda ()
               (local-set-key (kbd "C-c h") (bind (eshell/h))))))
 
-(after 'compile
-  (define-key compilation-mode-map (kbd "j") 'compilation-next-error)
-  (define-key compilation-mode-map (kbd "k") 'compilation-previous-error))
-
 (after 'help-mode
   (define-key help-mode-map (kbd "n") 'next-line)
-  (define-key help-mode-map (kbd "p") 'previous-line)
-  (define-key help-mode-map (kbd "j") 'next-line)
-  (define-key help-mode-map (kbd "k") 'previous-line))
-
-(after 'package-menu-mode
-  (define-key package-menu-mode-map (kbd "j") 'next-line)
-  (define-key package-menu-mode-map (kbd "k") 'previous-line))
+  (define-key help-mode-map (kbd "p") 'previous-line))
 
 (global-set-key [prior] 'previous-buffer)
 (global-set-key [next] 'next-buffer)
@@ -319,10 +104,5 @@
 ;; replace with [r]eally [q]uit
 (global-set-key (kbd "C-x r q") 'save-buffers-kill-terminal)
 (global-set-key (kbd "C-x C-c") (bind (message "Thou shall not quit!")))
-(after 'evil
-  (defadvice evil-quit (around advice-for-evil-quit activate)
-    (message "Thou shall not quit!"))
-  (defadvice evil-quit-all (around advice-for-evil-quit-all activate)
-    (message "Thou shall not quit!")))
 
 (provide 'init-bindings)

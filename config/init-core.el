@@ -181,3 +181,4 @@
 (add-hook 'find-file-hook #'visual-line-mode)
 
 (provide 'init-core)
+
