@@ -1,10 +1,16 @@
-(require-package 'flx)
-(require 'flx)
-
 (require-package 'swiper)
-(require-package 'counsel)
 
-(setq ivy-initial-inputs-alist '((t . "")))
+
+(require-package 'counsel)
+(after 'counsel
+  (cond ((executable-find "ag")
+         t)
+        ((executable-find "pt")
+         (setq counsel-ag-base-command "pt -e --nogroup --nocolor %S"))
+        ((executable-find "ack")
+         (setq counsel-ag-base-command "ack --nogroup --nocolor %S"))))
+
+
 (setq ivy-use-virtual-buffers t)
 (setq ivy-re-builders-alist '((t . ivy--regex-fuzzy)))
 (setq ivy-height 12)
@@ -16,14 +22,16 @@
 
 (defun my-ivy-mini ()
   (interactive)
-  (let ((buffers (mapcar #'buffer-name (buffer-list))))
-    (ivy-read "Search: " (append buffers recentf-list)
+  (let* ((buffers (mapcar #'buffer-name (buffer-list)))
+         (bufnames (mapcar #'(lambda (buf) (concat "Buffer: " buf)) buffers))
+         (recents (mapcar #'(lambda (file) (concat "Recent: " file)) recentf-list)))
+    (ivy-read "Search: " (append bufnames recents)
               :action (lambda (f)
                         (with-ivy-window
-                          (cond ((member f buffers)
-                                 (switch-to-buffer f))
+                          (cond ((member f bufnames)
+                                 (switch-to-buffer (substring f 8)))
                                 (t
-                                 (find-file f))))))))
+                                 (find-file (substring f 8)))))))))
 
 (defun my-ivy-everything ()
   (interactive)
@@ -46,10 +54,6 @@
                          (find-file f))
                         (t
                          (find-file (concat (projectile-project-root) f)))))))))
-
-;; (require 'ivy)
-;; (setq ivy--flx-cache (flx-make-filename-cache))
-;; (setq ivy--flx-cache (flx-make-string-cache))
 
 (when (eq dotemacs-switch-engine 'ivy)
   (ivy-mode t)

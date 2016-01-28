@@ -9,13 +9,12 @@
 (setq-default save-place t)
 
 
-;; minibuffer history
-(require 'savehist)
+;; savehist
 (setq savehist-file (concat dotemacs-cache-directory "savehist")
       savehist-additional-variables '(search ring regexp-search-ring)
       savehist-autosave-interval 60
       history-length 1000)
-(savehist-mode t)
+(savehist-mode)
 
 
 ;; recent files
@@ -26,11 +25,14 @@
 (setq recentf-auto-cleanup 300)
 (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'")
 (recentf-mode t)
-(run-with-timer 1800 1800 'recentf-save-list)
+(run-with-idle-timer 600 t #'recentf-save-list)
 
 
 ;; gc
-(run-with-idle-timer (* 60 3) t (lambda () (garbage-collect)))
+(defun my-minibuffer-setup-hook () (setq gc-cons-threshold most-positive-fixnum))
+(defun my-minibuffer-exit-hook () (setq gc-cons-threshold (* 64 1024 1024)))
+(add-hook 'minibuffer-setup-hook #'my-minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'my-minibuffer-exit-hook)
 
 
 ;; pcomplete
@@ -46,7 +48,16 @@
 
 
 ;; dired
-(require 'dired-x)
+(after 'dired
+  (require 'dired-x))
+
+
+;; url
+(setq url-configuration-directory (concat dotemacs-cache-directory "url/"))
+
+
+;; tramp
+(setq tramp-persistency-file-name (concat dotemacs-cache-directory "tramp"))
 
 
 ;; comint
@@ -175,10 +186,16 @@
   (add-hook 'minibuffer-exit-hook (lambda () (electric-pair-mode t))))
 
 
-(add-hook 'find-file-hook (lambda ()
-                            (unless (eq major-mode 'org-mode)
-                              (setq show-trailing-whitespace t))))
-(add-hook 'find-file-hook #'visual-line-mode)
+(defun my-find-file-hook ()
+  (unless (eq major-mode 'org-mode)
+    (setq show-trailing-whitespace t))
+
+  (when (string-match "\\.min\\." (buffer-file-name))
+    (fundamental-mode))
+
+  (visual-line-mode))
+(add-hook 'find-file-hook #'my-find-file-hook)
+
 
 (provide 'init-core)
 

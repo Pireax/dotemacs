@@ -1,9 +1,15 @@
-(let ((debug-on-error t)
-      (gc-cons-threshold (* 1024 1024 1024))
+(let ((gc-cons-threshold most-positive-fixnum)
+      (debug-on-error t)
       (file-name-handler-alist nil)
       (config-directory (concat user-emacs-directory "config/")))
 
   (eval-when-compile (require 'cl))
+
+  (lexical-let ((emacs-start-time (current-time)))
+    (add-hook 'emacs-startup-hook
+              (lambda ()
+                (let ((elapsed (float-time (time-subtract (current-time) emacs-start-time))))
+                  (message "[Emacs initialized in %.3fs]" elapsed)))))
 
   (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
   (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
@@ -56,5 +62,5 @@
     (load custom-file))
 
   (cl-loop for file in (directory-files config-directory t)
-           unless (file-directory-p file)
+           when (string-match "\\.el$" file)
            do (require (intern (file-name-base file)) file)))

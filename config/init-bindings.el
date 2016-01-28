@@ -1,14 +1,24 @@
 (defmacro bind (&rest commands)
   "Convenience macro which creates a lambda interactive command."
-  `(lambda ()
-     (interactive)
+  `(lambda (arg)
+     (interactive "P")
      ,@commands))
 
 
 (require-package 'which-key)
 (setq which-key-idle-delay 0.2)
 (which-key-mode)
+
 (add-to-list 'which-key-description-replacement-alist '("*hydra/" . ""))
+
+;; escape minibuffer
+(define-key minibuffer-local-map [escape] 'my-minibuffer-keyboard-quit)
+(define-key minibuffer-local-ns-map [escape] 'my-minibuffer-keyboard-quit)
+(define-key minibuffer-local-completion-map [escape] 'my-minibuffer-keyboard-quit)
+(define-key minibuffer-local-must-match-map [escape] 'my-minibuffer-keyboard-quit)
+(define-key minibuffer-local-isearch-map [escape] 'my-minibuffer-keyboard-quit)
+
+(define-key minibuffer-local-map (kbd "C-w") 'backward-kill-word)
 
 (after 'ivy
   (define-key ivy-mode-map [escape] (kbd "C-g")))
@@ -52,11 +62,6 @@
   (global-set-key (kbd "C-=") 'er/expand-region))
 
 
-(after 'web-mode
-  (after "angular-snippets-autoloads"
-    (define-key web-mode-map (kbd "C-c C-d") 'ng-snip-show-docs-at-point)))
-
-
 ;; mouse scrolling in terminal
 (unless (display-graphic-p)
   (global-set-key [mouse-4] (bind (scroll-down 1)))
@@ -72,6 +77,30 @@
   (define-key help-mode-map (kbd "n") 'next-line)
   (define-key help-mode-map (kbd "p") 'previous-line))
 
+(after "helm-autoloads"
+  (global-set-key (kbd "C-c h a") 'helm-apropos)
+  (global-set-key (kbd "C-c h b") 'helm-mini)
+  (after "helm-dash-autoloads"
+    (global-set-key (kbd "C-c h d") 'helm-dash))
+  (global-set-key (kbd "C-c h e") 'helm-recentf)
+  (global-set-key (kbd "C-c h f") 'helm-find-files)
+  (global-set-key (kbd "C-c h m") 'helm-bookmarks)
+  (after "helm-projectile-autoloads"
+    (global-set-key (kbd "C-c h p") 'helm-projectile))
+  (global-set-key (kbd "C-c h r") 'helm-register)
+  (global-set-key (kbd "C-c h t") 'helm-etags-select)
+  (global-set-key (kbd "C-c h x") 'helm-M-x)
+  (global-set-key (kbd "C-c h y") 'helm-show-kill-ring))
+
+
+(after 'counsel
+  (global-set-key (kbd "C-c i b") 'my-ivy-mini)
+  (global-set-key (kbd "C-c i e") 'ivy-recentf)
+  (global-set-key (kbd "C-c i f") 'counsel-find-file)
+  (global-set-key (kbd "C-c i x") 'counsel-M-x)
+  (global-set-key (kbd "C-c i y") 'my-ivy-kill-ring))
+
+
 (global-set-key [prior] 'previous-buffer)
 (global-set-key [next] 'next-buffer)
 
@@ -83,6 +112,7 @@
 (global-set-key (kbd "C-c t") 'my-new-eshell-split)
 
 (global-set-key (kbd "C-x c") 'calculator)
+(global-set-key (kbd "C-x C") 'calendar)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "C-x C-k") 'kill-this-buffer)
 
